@@ -79,12 +79,7 @@ The application starts at **http://localhost:8080**.
 
 > The project compiles with `--enable-preview`. If you run the packaged JAR directly, start it with `java --enable-preview -jar target/SIM_activation-0.0.1-SNAPSHOT.jar`.
 
-## Actuator Endpoints
 
-| Endpoint                  | Description        |
-|---------------------------|--------------------|
-| `/actuator/health`        | Application health |
-| `/actuator/info`          | Application info   |
 
 ## Running Tests
 
