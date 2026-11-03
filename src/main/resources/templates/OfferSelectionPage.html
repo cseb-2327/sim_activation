@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step 3: Assign Offer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
+            --input-bg: #f9fafb;
+            --input-bg-readonly: #f3f4f6;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success-color: #10b981;
+            --success-hover: #059669;
+            --error-color: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 540px;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #4f46e5;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            text-align: center;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none; /* removes default browser styling for select */
+        }
+
+        /* Custom dropdown arrow wrapper */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "";
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            pointer-events: none;
+        }
+
+        /* Hide Number Spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: #ffffff;
+        }
+
+        /* Read-only specific styling */
+        input[readonly] {
+            background: var(--input-bg-readonly);
+            padding-left: 2.5rem;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        input[readonly]:focus {
+            outline: none;
+            border-color: var(--border-color);
+            box-shadow: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            color: #9ca3af;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--success-color); /* Green to indicate final activation */
+            color: white;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--success-hover);
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <div class="header-container">
+        <span class="step-badge">Step 3 of 3</span>
+        <h1>Assign Offer & Activate</h1>
+        <p class="subtitle">Select a plan and define the offer metrics to finalize activation.</p>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}" style="margin: 0;"></p>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <p th:text="${errorMessage}" style="margin: 0;"></p>
+    </div>
+
+    <form action="/activation/assign-offer" method="post">
+
+        <!-- System Data -->
+        <div class="form-group">
+            <label for="simId">SIM Reference ID (Internal)</label>
+            <svg class="input-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input type="text" id="simId" name="simId" th:value="${param.simId}" readonly />
+        </div>
+
+        <h2 class="section-title">Offer Configuration</h2>
+
+        <div class="form-group">
+            <label for="offerName">Select Base Plan</label>
+            <div class="select-wrapper">
+                <select id="offerName" name="offerName" required>
+                    <option value="" disabled selected>Choose a plan...</option>
+                    <option value="Basic Plan">Basic Plan</option>
+                    <option value="Super Data Plan">Super Data Plan</option>
+                    <option value="Unlimited Calling">Unlimited Calling</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="callQty">Call Minutes</label>
+                <input type="number" id="callQty" name="callQty" placeholder="e.g., 1000" required />
+            </div>
+            <div class="form-group">
+                <label for="dataQty">Data Limit (GB)</label>
+                <input type="number" id="dataQty" name="dataQty" placeholder="e.g., 5" required />
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="cost">Cost (₹)</label>
+                <input type="number" id="cost" name="cost" placeholder="e.g., 299" required />
+            </div>
+            <div class="form-group">
+                <label for="duration">Validity (Days)</label>
+                <input type="number" id="duration" name="duration" placeholder="e.g., 28" required />
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            Complete Activation
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </button>
+    </form>
+</div>
+
+</body>
+</html>

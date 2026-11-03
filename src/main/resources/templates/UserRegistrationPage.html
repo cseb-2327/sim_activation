@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Registration Portal</title>
+    <!-- Modern, clean sans-serif font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
+            --input-bg: #f9fafb;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --error-color: #ef4444;
+            --success-color: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 1.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            font-family: inherit;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        /* Hide Number Spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: #ffffff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .error-msg {
+            color: var(--error-color);
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.875rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <div class="header-container">
+        <h1>SIM Activation Portal</h1>
+        <p class="subtitle">Please provide your details for identity verification</p>
+    </div>
+
+    <div th:if="${successMessage}" class="alert alert-success">
+        <p th:text="${successMessage}" style="margin: 0;"></p>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-error">
+        <p th:text="${errorMessage}" style="margin: 0;"></p>
+    </div>
+
+    <form th:action="@{/activation/register}" method="post" id="registrationForm" onsubmit="return validateForm()">
+
+        <!-- Section 1: Personal Information -->
+        <h2 class="section-title">Personal Information</h2>
+
+        <div class="form-group">
+            <label for="name">First Name</label>
+            <input type="text" name="name" id="name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email_ID">Email Address</label>
+                <input type="email" name="email_ID" id="email_ID" placeholder="name@example.com" required>
+            </div>
+            <div class="form-group">
+                <label for="DOB">Date of Birth</label>
+                <input type="date" name="DOB" id="DOB" required>
+            </div>
+        </div>
+
+        <!-- Section 2: Contact Details -->
+        <h2 class="section-title">Contact Details</h2>
+
+        <div class="form-group">
+            <label for="Address">Street Address</label>
+            <textarea name="Address" id="Address" placeholder="Enter your full residential address" required></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="City">City</label>
+                <input type="text" name="City" id="City" placeholder="City name" required>
+            </div>
+            <div class="form-group">
+                <label for="State">State</label>
+                <input type="text" name="State" id="State" placeholder="State name" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Pincode">Pincode</label>
+            <input type="number" name="Pincode" id="Pincode" placeholder="6-digit Pincode" required>
+            <div class="hint">
+                <span>Must be exactly 6 digits</span>
+                <span id="pincodeCount">0/6</span>
+            </div>
+            <span id="pincodeError" class="error-msg">Pincode must be exactly 6 digits.</span>
+        </div>
+
+        <!-- Section 3: Identity & Service Verification -->
+        <h2 class="section-title">Identity & Service Details</h2>
+
+        <div class="form-group">
+            <label for="ID_number">Aadhaar Number</label>
+            <input type="number" name="ID_number" id="ID_number" placeholder="12-digit Aadhaar number" required>
+            <div class="hint">
+                <span>Must be exactly 12 digits</span>
+                <span id="aadhaarCount">0/12</span>
+            </div>
+            <span id="aadhaarError" class="error-msg">Aadhaar number must be exactly 12 digits.</span>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="SIM_number">SIM Number</label>
+                <input type="number" name="SIM_number" id="SIM_number" placeholder="13-digit SIM number" required>
+                <div class="hint">
+                    <span>Must be exactly 13 digits</span>
+                    <span id="simCount">0/13</span>
+                </div>
+                <span id="simError" class="error-msg">SIM number must be exactly 13 digits.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="Service_number">Service Number</label>
+                <input type="number" name="Service_number" id="Service_number" placeholder="10-digit Service" required>
+                <div class="hint">
+                    <span>Must be exactly 10 digits</span>
+                    <span id="serviceCount">0/10</span>
+                </div>
+                <span id="serviceError" class="error-msg">Service number must be exactly 10 digits.</span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Registration</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setupNumberInput("Pincode", 6, "pincodeCount", "pincodeError");
+        setupNumberInput("ID_number", 12, "aadhaarCount", "aadhaarError");
+        setupNumberInput("SIM_number", 13, "simCount", "simError");
+        setupNumberInput("Service_number", 10, "serviceCount", "serviceError");
+    });
+
+    function setupNumberInput(inputId, maxLength, countId, errorId) {
+        const input = document.getElementById(inputId);
+        const countDisplay = document.getElementById(countId);
+        const errorDisplay = document.getElementById(errorId);
+
+        input.addEventListener("keydown", function (e) {
+            if (["e", "E", "+", "-", "."].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        input.addEventListener("input", function () {
+            if (this.value.length > maxLength) {
+                this.value = this.value.slice(0, maxLength);
+            }
+
+            const currentLength = this.value.length;
+            countDisplay.textContent = `${currentLength}/${maxLength}`;
+
+            if (currentLength === maxLength) {
+                countDisplay.style.color = '#10b981';
+                errorDisplay.style.display = 'none';
+            } else {
+                countDisplay.style.color = '#6b7280';
+            }
+        });
+    }
+
+    function validateForm() {
+        const pincode = document.getElementById("Pincode").value;
+        const aadhaar = document.getElementById("ID_number").value;
+        const sim = document.getElementById("SIM_number").value;
+        const service = document.getElementById("Service_number").value;
+
+        let isValid = true;
+
+        if (pincode.length !== 6) {
+            document.getElementById("pincodeError").style.display = "block";
+            isValid = false;
+        }
+        if (aadhaar.length !== 12) {
+            document.getElementById("aadhaarError").style.display = "block";
+            isValid = false;
+        }
+        if (sim.length !== 13) {
+            document.getElementById("simError").style.display = "block";
+            isValid = false;
+        }
+        if (service.length !== 10) {
+            document.getElementById("serviceError").style.display = "block";
+            isValid = false;
+        }
+
+        return isValid;
+    }
+</script>
+
+</body>
+</html>

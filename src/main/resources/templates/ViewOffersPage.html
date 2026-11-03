@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View My Offers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="number"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .nav-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Check Your Active SIM Offers</h2>
+    <p>Enter your active SIM number to view the plans currently assigned to your account.</p>
+
+    <!-- Search Form -->
+    <form action="/activation/view-offers" method="post">
+        <div class="form-group">
+            <label for="ServiceNumber"><strong>Phone Number:</strong></label><br/>
+            <input type="number" id="ServiceNumber" name="ServiceNumber" required placeholder="e.g. 9876543210" />
+        </div>
+        <button type="submit">View Offers</button>
+    </form>
+
+    <!-- Error Message Display -->
+    <p class="error" th:if="${errorMessage}" th:text="${errorMessage}"></p>
+
+    <!-- Results Table (Only renders if the 'offers' list is present and not empty) -->
+    <div th:if="${offers != null and !offers.isEmpty()}">
+        <h3 style="color: #28a745; margin-top: 30px;">Active Offers for SIM: <span th:text="${simNumber}"></span></h3>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Offer Name</th>
+                <th>Call Quantity (Mins)</th>
+                <th>Data Quantity (GB)</th>
+                <th>Duration (Days)</th>
+                <th>Cost (₹)</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Loop through the list of offers dynamically -->
+            <tr th:each="offer : ${offers}">
+                <td th:text="${offer.offerName}"></td>
+                <td th:text="${offer.callQty}"></td>
+                <td th:text="${offer.dataqty}"></td>
+                <td th:text="${offer.duration}"></td>
+                <td th:text="${offer.cost}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Navigation Links -->
+    <br/>
+    <a href="/activation/customer-activate" class="nav-link">← Go to SIM Activation</a><br/>
+</div>
+
+</body>
+</html>
